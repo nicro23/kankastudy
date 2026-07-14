@@ -286,6 +286,37 @@
     background:linear-gradient(90deg, var(--gold-400), var(--gold-600));
   }
   .feature-list{display:flex; flex-direction:column; gap:20px;}
+
+  /* ---------- functional quiz ---------- */
+  .quiz-meta{font-size:0.85rem; color:rgba(255,255,255,0.65); margin-bottom:10px;}
+  .quiz-question{
+    font-family:'El Messiri',serif; font-size:1.3rem; color:#fff; margin-top:16px; line-height:1.5;
+  }
+  .quiz-options{display:flex; flex-direction:column; gap:12px; margin-top:22px;}
+  .quiz-opt{
+    text-align:right; padding:15px 18px; border-radius:14px;
+    background:rgba(255,255,255,0.06); border:1px solid var(--line-dark);
+    color:#fff; font-family:inherit; font-size:0.96rem;
+    transition:all .2s ease;
+  }
+  html[dir="ltr"] .quiz-opt{text-align:left;}
+  .quiz-opt:hover{background:rgba(242,196,104,0.14); border-color:rgba(242,196,104,0.4);}
+  .quiz-opt.selected{background:rgba(242,196,104,0.22); border-color:var(--gold-400); color:var(--gold-300);}
+  .quiz-back{
+    margin-top:24px; background:none; border:none; color:rgba(255,255,255,0.6);
+    font-size:0.88rem; padding:6px 2px;
+  }
+  .quiz-back:not(:disabled):hover{color:var(--gold-300);}
+  .quiz-back:disabled{opacity:0.35; cursor:default;}
+  .quiz-result-card{
+    background:rgba(242,196,104,0.1); border:1px solid rgba(242,196,104,0.32);
+    border-radius:16px; padding:22px; margin-top:20px;
+  }
+  .quiz-result-card .r-name{font-family:'El Messiri',serif; font-size:1.2rem; color:var(--gold-300);}
+  .quiz-result-card .r-meta{font-size:0.88rem; color:rgba(255,255,255,0.7); margin-top:6px;}
+  .quiz-result-card .r-note{font-size:0.9rem; color:rgba(255,255,255,0.85); margin-top:14px; line-height:1.7;}
+  .quiz-result-actions{display:flex; align-items:center; gap:18px; margin-top:24px; flex-wrap:wrap;}
+  .quiz-result-actions .quiz-back{margin-top:0;}
   .feature-item{display:flex; gap:16px;}
   .feature-icon{
     width:46px; height:46px; border-radius:12px; flex-shrink:0;
@@ -507,7 +538,7 @@
         <button data-lang="en">EN</button>
       </div>
       <a href="#" class="btn btn-ghost" data-i18n="nav_login">تسجيل الدخول</a>
-      <a href="#" class="btn btn-gold" data-i18n="nav_cta">احجز استشارتك المجانية</a>
+      <a href="https://wa.me/905358170788" target="_blank" rel="noopener" class="btn btn-gold" data-i18n="nav_cta">احجز استشارتك المجانية</a>
       <button class="burger" aria-label="menu"><span></span><span></span><span></span></button>
     </div>
   </div>
@@ -586,20 +617,25 @@
 <section id="match">
   <div class="wrap">
     <div class="dark-block match-section">
-      <div class="match-visual reveal">
-        <div class="match-step active">
-          <div class="idx">1</div>
-          <div class="label" data-i18n="match_step1">إيه ميزانيتك السنوية المتاحة؟</div>
+      <div class="match-visual reveal" id="matchVisual">
+        <div id="quizStepView">
+          <div class="quiz-meta">
+            <span id="quizStepLabel">السؤال 1 من 3</span>
+          </div>
+          <div class="match-progress"><i id="quizProgressBar" style="width:33%;"></i></div>
+          <div class="quiz-question" id="quizQuestion">إيه ميزانيتك السنوية المتاحة؟</div>
+          <div class="quiz-options" id="quizOptions"></div>
+          <button class="quiz-back" id="quizBack" disabled>‹ السابق</button>
         </div>
-        <div class="match-step">
-          <div class="idx">2</div>
-          <div class="label" data-i18n="match_step2">مهتم بتخصص علمي ولا نظري؟</div>
+        <div id="quizResultView" style="display:none;">
+          <div class="quiz-meta"><span data-i18n="quiz_result_tag">نتيجتك جاهزة</span></div>
+          <div class="quiz-question" id="quizResultTitle" data-i18n="quiz_result_title">أنسب جامعة ليك على حسب إجاباتك</div>
+          <div class="quiz-result-card" id="quizResultCard"></div>
+          <div class="quiz-result-actions">
+            <a href="https://wa.me/905358170788" target="_blank" rel="noopener" class="btn btn-gold" data-i18n="quiz_result_cta">اتكلم مع مستشار الآن</a>
+            <button class="quiz-back" id="quizRestart" data-i18n="quiz_restart">↺ ابدأ من جديد</button>
+          </div>
         </div>
-        <div class="match-step">
-          <div class="idx">3</div>
-          <div class="label" data-i18n="match_step3">عايز تدرس بالتركي ولا الإنجليزي؟</div>
-        </div>
-        <div class="match-progress"><i></i></div>
       </div>
       <div>
         <div class="eyebrow" data-i18n="match_eyebrow">أداة تفاعلية حصرية</div>
@@ -619,7 +655,7 @@
             <div><h4 data-i18n="feat3_t">تواصل فوري</h4><p data-i18n="feat3_p">بعد النتيجة تقدر تكلم مستشار مباشرة على واتساب.</p></div>
           </div>
         </div>
-        <a href="#" class="btn btn-gold" style="margin-top:30px;" data-i18n="match_btn">ابدأ الاختبار الآن</a>
+        <a href="#matchVisual" id="matchStartBtn" class="btn btn-gold" style="margin-top:30px;" data-i18n="match_btn">ابدأ الاختبار الآن</a>
       </div>
     </div>
   </div>
@@ -633,15 +669,15 @@
       <p data-i18n="uni_lead">+180 جامعة حكومية وخاصة، بتفاصيل محدثة لكل تخصص.</p>
     </div>
     <div class="filter-chips">
-      <span class="chip active" data-i18n="chip_all">الكل</span>
-      <span class="chip" data-i18n="chip_private">خاصة</span>
-      <span class="chip" data-i18n="chip_public">حكومية</span>
-      <span class="chip" data-i18n="chip_istanbul">اسطنبول</span>
-      <span class="chip" data-i18n="chip_ankara">أنقرة</span>
-      <span class="chip" data-i18n="chip_english">دراسة بالإنجليزي</span>
+      <span class="chip active" data-i18n="chip_all" data-filter="all">الكل</span>
+      <span class="chip" data-i18n="chip_private" data-filter="type:private">خاصة</span>
+      <span class="chip" data-i18n="chip_public" data-filter="type:public">حكومية</span>
+      <span class="chip" data-i18n="chip_istanbul" data-filter="city:istanbul">اسطنبول</span>
+      <span class="chip" data-i18n="chip_ankara" data-filter="city:ankara">أنقرة</span>
+      <span class="chip" data-i18n="chip_english" data-filter="lang:english">دراسة بالإنجليزي</span>
     </div>
     <div class="uni-grid">
-      <div class="uni-card reveal">
+      <div class="uni-card reveal" data-type="private" data-city="istanbul" data-lang="english">
         <div class="uni-media"><div class="tile-pattern"></div><span class="uni-badge" data-i18n="uni1_badge">الأعلى طلبًا</span></div>
         <div class="uni-body">
           <h4 data-i18n="uni1_name">جامعة اسطنبول أيدن</h4>
@@ -649,7 +685,7 @@
           <div class="row"><span data-i18n="price_from">يبدأ من</span><span class="price"><b>2,400$</b> <span data-i18n="per_year">/ سنويًا</span></span></div>
         </div>
       </div>
-      <div class="uni-card reveal">
+      <div class="uni-card reveal" data-type="private" data-city="istanbul" data-lang="english">
         <div class="uni-media"><div class="tile-pattern"></div><span class="uni-badge" data-i18n="uni2_badge">منح متاحة</span></div>
         <div class="uni-body">
           <h4 data-i18n="uni2_name">جامعة بهتشه شهير</h4>
@@ -657,7 +693,7 @@
           <div class="row"><span data-i18n="price_from">يبدأ من</span><span class="price"><b>3,100$</b> <span data-i18n="per_year">/ سنويًا</span></span></div>
         </div>
       </div>
-      <div class="uni-card reveal">
+      <div class="uni-card reveal" data-type="public" data-city="ankara" data-lang="turkish">
         <div class="uni-media"><div class="tile-pattern"></div><span class="uni-badge" data-i18n="uni3_badge">حكومية</span></div>
         <div class="uni-body">
           <h4 data-i18n="uni3_name">جامعة أنقرة</h4>
@@ -694,7 +730,7 @@
       <div class="calc-result">
         <div class="amount" id="calcAmount">550$ <small data-i18n="calc_per_month">/ شهريًا تقريبًا</small></div>
         <p data-i18n="calc_desc">يشمل السكن، المواصلات، والمصاريف الشخصية الأساسية</p>
-        <a href="#" class="btn btn-gold" style="margin-top:18px;" data-i18n="calc_btn">احصل على تفصيل دقيق</a>
+        <a href="https://wa.me/905358170788" target="_blank" rel="noopener" id="calcDetailBtn" class="btn btn-gold" style="margin-top:18px;" data-i18n="calc_btn">احصل على تفصيل دقيق</a>
       </div>
     </div>
   </div>
@@ -805,7 +841,7 @@
       <div class="tile-pattern"></div>
       <h2 data-i18n="cta_title">جاهز تبدأ رحلتك؟</h2>
       <p data-i18n="cta_lead">استشارة أولى مجانية، من غير أي التزام.</p>
-      <a href="#" class="btn btn-gold" data-i18n="cta_btn">احجز مكالمتك المجانية الآن</a>
+      <a href="https://wa.me/905358170788" target="_blank" rel="noopener" class="btn btn-gold" data-i18n="cta_btn">احجز مكالمتك المجانية الآن</a>
     </div>
   </div>
 </section>
@@ -883,6 +919,15 @@
       match_eyebrow:"أداة تفاعلية حصرية", match_title:"Kanka Match — دقيقتين وهنقولك أنسب 3 جامعات ليك",
       match_lead:"مش لازم تقرا مية مقال. جاوب على أسئلة بسيطة عن ميزانيتك ومعدلك واهتمامك، ونطلعلك مقارنة جاهزة.",
       match_step1:"إيه ميزانيتك السنوية المتاحة؟", match_step2:"مهتم بتخصص علمي ولا نظري؟", match_step3:"عايز تدرس بالتركي ولا الإنجليزي؟",
+      q1_o1:"أقل من 1,500$", q1_o2:"1,500$ – 3,000$", q1_o3:"أكتر من 3,000$",
+      q2_o1:"علمي (هندسة / طب)", q2_o2:"نظري (إدارة / قانون)", q2_o3:"تصميم وفنون",
+      q3_o1:"بالتركي", q3_o2:"بالإنجليزي", q3_o3:"مفيش فرق",
+      quiz_progress:"السؤال {n} من 3", quiz_back:"‹ السابق",
+      quiz_result_tag:"نتيجتك جاهزة", quiz_result_title:"أنسب جامعة ليك على حسب إجاباتك",
+      quiz_result_cta:"اتكلم مع مستشار الآن", quiz_restart:"↺ ابدأ من جديد",
+      quiz_note_low:"اخترنا لك خيار اقتصادي بمصاريف سنوية منخفضة زي ما حددت.",
+      quiz_note_mid:"الاختيار ده بيوازن بين الجودة والسعر حسب ميزانيتك.",
+      quiz_note_high:"ده اختيار مميز بيديك تخصصات وخدمات إضافية حسب ميزانيتك الأعلى.",
       feat1_t:"مطابقة دقيقة", feat1_p:"حسب الميزانية، المعدل، والتخصص المفضل.",
       feat2_t:"مقارنة جنبًا لجنب", feat2_p:"رسوم، سكن، لغة الدراسة، والتصنيف في جدول واحد.",
       feat3_t:"تواصل فوري", feat3_p:"بعد النتيجة تقدر تكلم مستشار مباشرة على واتساب.",
@@ -927,6 +972,15 @@
       match_eyebrow:"Exclusive interactive tool", match_title:"Kanka Match — 2 minutes to your best 3 universities",
       match_lead:"No need to read a hundred articles. Answer a few simple questions about your budget, grades, and interests, and get an instant comparison.",
       match_step1:"What's your yearly budget?", match_step2:"Interested in science or humanities?", match_step3:"Study in Turkish or English?",
+      q1_o1:"Under $1,500", q1_o2:"$1,500 – $3,000", q1_o3:"Over $3,000",
+      q2_o1:"Science (Engineering / Medicine)", q2_o2:"Humanities (Business / Law)", q2_o3:"Design & Arts",
+      q3_o1:"Turkish", q3_o2:"English", q3_o3:"No preference",
+      quiz_progress:"Question {n} of 3", quiz_back:"‹ Back",
+      quiz_result_tag:"Your result is ready", quiz_result_title:"Your best-fit university based on your answers",
+      quiz_result_cta:"Talk to an advisor now", quiz_restart:"↺ Start over",
+      quiz_note_low:"We picked a budget-friendly option with low yearly costs, as you specified.",
+      quiz_note_mid:"This choice balances quality and price for your budget.",
+      quiz_note_high:"A premium pick with extra majors and services for your higher budget.",
       feat1_t:"Precise matching", feat1_p:"Based on your budget, grades, and preferred major.",
       feat2_t:"Side-by-side comparison", feat2_p:"Fees, housing, language of instruction, and ranking in one table.",
       feat3_t:"Instant contact", feat3_p:"After your result, chat with an advisor directly on WhatsApp.",
@@ -971,6 +1025,15 @@
       match_eyebrow:"Özel interaktif araç", match_title:"Kanka Match — 2 dakikada sana en uygun 3 üniversite",
       match_lead:"Yüzlerce makale okumana gerek yok. Bütçen, notların ve ilgi alanların hakkında birkaç basit soruyu cevapla, anında karşılaştırma al.",
       match_step1:"Yıllık bütçen ne kadar?", match_step2:"Sayısal mı yoksa sözel mi ilgileniyorsun?", match_step3:"Türkçe mi İngilizce mi okumak istiyorsun?",
+      q1_o1:"1.500$'dan az", q1_o2:"1.500$ – 3.000$", q1_o3:"3.000$'dan fazla",
+      q2_o1:"Sayısal (Mühendislik / Tıp)", q2_o2:"Sözel (İşletme / Hukuk)", q2_o3:"Tasarım ve Sanat",
+      q3_o1:"Türkçe", q3_o2:"İngilizce", q3_o3:"Fark etmez",
+      quiz_progress:"Soru {n} / 3", quiz_back:"‹ Geri",
+      quiz_result_tag:"Sonucun hazır", quiz_result_title:"Cevaplarına göre sana en uygun üniversite",
+      quiz_result_cta:"Şimdi bir danışmanla konuş", quiz_restart:"↺ Yeniden başla",
+      quiz_note_low:"Belirttiğin gibi düşük yıllık maliyetli, bütçe dostu bir seçenek belirledik.",
+      quiz_note_mid:"Bu seçim, bütçen için kalite ve fiyatı dengeliyor.",
+      quiz_note_high:"Daha yüksek bütçen için ekstra bölümler ve hizmetler sunan premium bir seçim.",
       feat1_t:"Hassas eşleştirme", feat1_p:"Bütçene, notlarına ve tercih ettiğin bölüme göre.",
       feat2_t:"Yan yana karşılaştırma", feat2_p:"Ücretler, konaklama, eğitim dili ve sıralama tek tabloda.",
       feat3_t:"Anında iletişim", feat3_p:"Sonuçtan sonra WhatsApp'tan direkt bir danışmanla konuş.",
@@ -1019,6 +1082,7 @@
       b.classList.toggle('active', b.getAttribute('data-lang') === lang);
     });
     localStorage.setItem && (window.__kankaLang = lang);
+    if(typeof refreshQuiz === 'function') refreshQuiz();
   }
 
   document.querySelectorAll('#langSwitch button, #langSwitchFooter button').forEach(btn=>{
@@ -1031,11 +1095,37 @@
     document.querySelector('nav').classList.toggle('open-mobile');
   });
 
-  // ---------- filter chips ----------
+  // ---------- filter chips (functional) ----------
+  const uniCards = document.querySelectorAll('.uni-card');
   document.querySelectorAll('.chip').forEach(chip=>{
     chip.addEventListener('click', ()=>{
       document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
       chip.classList.add('active');
+      const filter = chip.getAttribute('data-filter');
+      let visibleCount = 0;
+      uniCards.forEach(card=>{
+        let match = true;
+        if(filter !== 'all'){
+          const [key, val] = filter.split(':');
+          const attr = key === 'lang' ? 'lang' : key;
+          match = card.getAttribute('data-' + attr) === val;
+        }
+        card.style.display = match ? '' : 'none';
+        if(match) visibleCount++;
+      });
+      let emptyMsg = document.getElementById('uniEmptyMsg');
+      if(visibleCount === 0){
+        if(!emptyMsg){
+          emptyMsg = document.createElement('div');
+          emptyMsg.id = 'uniEmptyMsg';
+          emptyMsg.style.cssText = 'grid-column:1/-1; text-align:center; padding:30px; color:var(--muted); font-size:0.95rem;';
+          document.querySelector('.uni-grid').appendChild(emptyMsg);
+        }
+        const lang = document.getElementById('htmlRoot').getAttribute('lang') || 'ar';
+        emptyMsg.textContent = lang === 'ar' ? 'مفيش جامعات مطابقة للفلتر ده حاليًا.' : (lang === 'tr' ? 'Bu filtreye uygun üniversite yok.' : 'No universities match this filter yet.');
+      } else if(emptyMsg){
+        emptyMsg.remove();
+      }
     });
   });
 
@@ -1058,13 +1148,119 @@
   const typeSel = document.getElementById('calcType');
   const staySel = document.getElementById('calcStay');
   const amountEl = document.getElementById('calcAmount');
+  const calcDetailBtn = document.getElementById('calcDetailBtn');
   function updateCalc(){
-    const total = (base[citySel.value]||400) + (uniAdj[typeSel.value]||0) + (stayAdj[staySel.value]||0);
+    const city = citySel.value, type = typeSel.value, stay = staySel.value;
+    const total = (base[city]||400) + (uniAdj[type]||0) + (stayAdj[stay]||0);
     const lang = document.getElementById('htmlRoot').getAttribute('lang') || 'ar';
     const label = (I18N[lang] && I18N[lang].calc_per_month) || '/ شهريًا تقريبًا';
     amountEl.innerHTML = total + '$ <small>' + label + '</small>';
+    const msgByLang = {
+      ar: `أهلاً، عملت حساب تقريبي على الموقع: ${city} - ${type} - ${stay}، والتقدير الشهري طلع ${total}$. عايز تفصيل أدق لو سمحت.`,
+      en: `Hi, I used the cost calculator on the site: ${city}, ${type}, ${stay} — the monthly estimate was $${total}. Could I get a more precise breakdown?`,
+      tr: `Merhaba, sitedeki maliyet hesaplayıcıyı kullandım: ${city}, ${type}, ${stay} — aylık tahmin ${total}$ çıktı. Daha net bir döküm alabilir miyim?`
+    };
+    const msg = msgByLang[lang] || msgByLang.ar;
+    calcDetailBtn.href = 'https://wa.me/905358170788?text=' + encodeURIComponent(msg);
   }
   [citySel, typeSel, staySel].forEach(s=> s.addEventListener('change', updateCalc));
+  updateCalc();
+
+  // ---------- Kanka Match: functional quiz ----------
+  const QUIZ_QUESTIONS = [
+    {qKey:'match_step1', options:[{key:'q1_o1',value:'low'},{key:'q1_o2',value:'mid'},{key:'q1_o3',value:'high'}]},
+    {qKey:'match_step2', options:[{key:'q2_o1',value:'sci'},{key:'q2_o2',value:'hum'},{key:'q2_o3',value:'art'}]},
+    {qKey:'match_step3', options:[{key:'q3_o1',value:'tr'},{key:'q3_o2',value:'en'},{key:'q3_o3',value:'any'}]}
+  ];
+  let quizAnswers = [];
+  let quizStep = 0;
+  let quizShowingResult = false;
+
+  function currentDict(){
+    const lang = document.getElementById('htmlRoot').getAttribute('lang') || 'ar';
+    return I18N[lang] || I18N.ar;
+  }
+
+  function renderQuizStep(){
+    const dict = currentDict();
+    const q = QUIZ_QUESTIONS[quizStep];
+    const progressTpl = dict.quiz_progress || 'Question {n} of 3';
+    document.getElementById('quizStepLabel').textContent = progressTpl.replace('{n}', quizStep + 1);
+    document.getElementById('quizProgressBar').style.width = (((quizStep + 1) / QUIZ_QUESTIONS.length) * 100) + '%';
+    document.getElementById('quizQuestion').textContent = dict[q.qKey];
+    const optsWrap = document.getElementById('quizOptions');
+    optsWrap.innerHTML = '';
+    q.options.forEach(opt=>{
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'quiz-opt';
+      btn.textContent = dict[opt.key];
+      if(quizAnswers[quizStep] === opt.value) btn.classList.add('selected');
+      btn.addEventListener('click', ()=>{
+        quizAnswers[quizStep] = opt.value;
+        if(quizStep < QUIZ_QUESTIONS.length - 1){
+          quizStep++;
+          renderQuizStep();
+        } else {
+          showQuizResult();
+        }
+      });
+      optsWrap.appendChild(btn);
+    });
+    const backBtn = document.getElementById('quizBack');
+    backBtn.textContent = dict.quiz_back || '‹ Back';
+    backBtn.disabled = quizStep === 0;
+  }
+
+  function showQuizResult(){
+    quizShowingResult = true;
+    const dict = currentDict();
+    document.getElementById('quizStepView').style.display = 'none';
+    document.getElementById('quizResultView').style.display = 'block';
+    const budget = quizAnswers[0];
+    let uniKeyPrefix, noteKey;
+    if(budget === 'low'){ uniKeyPrefix = 'uni3'; noteKey = 'quiz_note_low'; }
+    else if(budget === 'high'){ uniKeyPrefix = 'uni2'; noteKey = 'quiz_note_high'; }
+    else { uniKeyPrefix = 'uni1'; noteKey = 'quiz_note_mid'; }
+    const name = dict[uniKeyPrefix + '_name'];
+    const meta = dict[uniKeyPrefix + '_meta'];
+    const note = dict[noteKey];
+    document.getElementById('quizResultCard').innerHTML =
+      '<div class="r-name">' + name + '</div><div class="r-meta">' + meta + '</div><div class="r-note">' + note + '</div>';
+    document.querySelectorAll('#quizResultView [data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      if(dict[key] !== undefined) el.textContent = dict[key];
+    });
+  }
+
+  function resetQuiz(){
+    quizAnswers = [];
+    quizStep = 0;
+    quizShowingResult = false;
+    document.getElementById('quizResultView').style.display = 'none';
+    document.getElementById('quizStepView').style.display = 'block';
+    renderQuizStep();
+  }
+
+  function refreshQuiz(){
+    if(quizShowingResult){ showQuizResult(); } else { renderQuizStep(); }
+  }
+
+  document.getElementById('quizBack').addEventListener('click', ()=>{
+    if(quizStep > 0){ quizStep--; renderQuizStep(); }
+  });
+  document.getElementById('quizRestart').addEventListener('click', resetQuiz);
+
+  const matchStartBtn = document.getElementById('matchStartBtn');
+  if(matchStartBtn){
+    matchStartBtn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      resetQuiz();
+      document.getElementById('matchVisual').scrollIntoView({behavior:'smooth', block:'center'});
+    });
+  }
+
+  renderQuizStep();
 </script>
 
 </body>
